@@ -18,7 +18,7 @@ async function main() {
     apiKey: apiKey,
     baseURL: baseURL,
   });
-
+  const model = "anthropic/claude-haiku-4.5";
   const tools = [
         {
           "type": "function",
