@@ -61,7 +61,7 @@ async function main() {
   // You can use print statements as follows for debugging, they'll be visible when running tests.
   console.error("Logs from your program will appear here!");
 
-  console.log(response.choices[0].message.content);
+  //console.log(response.choices[0].message.content);
 }
 
 main();
