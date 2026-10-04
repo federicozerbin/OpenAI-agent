@@ -49,7 +49,7 @@ async function main() {
     throw new Error("no choices in response");
   }
 
-  if (response.choices[0].message.tool_calls) {
+  if (response.choices[0].message.tool_calls?.length) {
     const toolCalls = response.choices[0].message.tool_calls;
     const firstToolCall = toolCalls[0];
     const functionName = firstToolCall.function.name;
@@ -57,11 +57,12 @@ async function main() {
     const res = await executeToolHandler(functionName, functionParameters);
     console.log(res);
   }
+  console.log(response.choices[0].message.content);
 
   // You can use print statements as follows for debugging, they'll be visible when running tests.
   console.error("Logs from your program will appear here!");
 
-  //console.log(response.choices[0].message.content);
+
 }
 
 main();
