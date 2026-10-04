@@ -53,8 +53,8 @@ async function main() {
     const toolCalls = response.choices[0].message.tool_calls;
     const firstToolCall = toolCalls[0];
     const functionName = firstToolCall.function.name;
-    const functionParameters = firstToolCall.function.arguments;
-    const res = executeToolHandler(functionName, functionParameters);
+    const functionParameters = JSON.parse(firstToolCall.function.arguments);
+    const res = await executeToolHandler(functionName, functionParameters);
     console.log(res);
   }
 

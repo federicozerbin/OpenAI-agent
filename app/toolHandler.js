@@ -1,19 +1,14 @@
-import fs from "fs";
+import fs from "fs/promises";
 
-export function executeToolHandler(functionName, functionParameters){
-    switch(functionName){
+export async function executeToolHandler(functionName, functionParameters) {
+    switch (functionName) {
         case "Read":
-            return executeReadHandler(functionParameters);
+            return await executeReadHandler(functionParameters);
         default:
-            return executeReadHandler(functionParameters);
+            throw new Error(`Unknown tool: ${functionName}`);
     }
 }
 
-function executeReadHandler(functionParameters){
-    const PATH = functionParameters.file_path;
-    let file;
-    fs.readFile(PATH, { encoding: "utf8" }, (err, data) => {
-        file = data;
-    });
-    return file;
+async function executeReadHandler({ file_path }) {
+    return await fs.readFile(file_path, { encoding: "utf8" });
 }
