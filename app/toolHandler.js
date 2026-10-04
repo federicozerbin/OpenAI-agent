@@ -19,11 +19,11 @@ async function executeReadHandler({ file_path }) {
     return await fs.readFile(file_path, { encoding: "utf8" });
 }
 
-async function executeWriteHandler({ command }) {
+async function executeBashHandler({ command }) {
     return execSync(command, { encoding: "utf-8" });
 }
 
-async function executeBashHandler({ file_path, content }) {
+async function executeWriteHandler({ file_path, content }) {
     const dir = path.dirname(file_path);
     await fs.mkdir(dir, { recursive: true });
     await fs.writeFile(file_path, content, { encoding: "utf8" });
