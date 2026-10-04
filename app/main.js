@@ -1,4 +1,5 @@
 import OpenAI from "openai";
+import {executeToolHandler} from "./toolHandler.js";
 
 async function main() {
   const [, , flag, prompt] = process.argv;
@@ -21,6 +22,8 @@ async function main() {
   const response = await client.chat.completions.create({
     model: "anthropic/claude-haiku-4.5",
     messages: [{ role: "user", content: prompt }],
+
+    // tools make fs local function available to the agent
     tools: [
       {
         "type": "function",
@@ -44,6 +47,15 @@ async function main() {
 
   if (!response.choices || response.choices.length === 0) {
     throw new Error("no choices in response");
+  }
+
+  if (response.choices[0].message.tool_calls) {
+    const toolCalls = response.choices[0].message.tool_calls;
+    const firstToolCall = toolCalls[0];
+    const functionName = firstToolCall.function.name;
+    const functionParameters = firstToolCall.function.arguments;
+    const res = executeToolHandler(functionName, functionParameters);
+    console.log(res);
   }
 
   // You can use print statements as follows for debugging, they'll be visible when running tests.
