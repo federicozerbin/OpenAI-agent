@@ -61,7 +61,7 @@ async function main() {
 
 
     //starts loop
-    if (tool_calls?.length) { //there are tool calls
+    if (tool_calls.length && tool_calls.length > 0) { //there are tool calls
       for(const x in tool_calls){
         const functionName = x.function.name;
         const functionParameters = JSON.parse(x.function.arguments);
