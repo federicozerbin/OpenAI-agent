@@ -5,6 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="43eb3814-a0a9-4cee-be35-2402703d53db" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/main.js" beforeDir="false" afterPath="$PROJECT_DIR$/app/main.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -15,10 +16,69 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 3,
-  "fromUser": false
-}]]></component>
+  <component name="NextEditCompletionFeaturesState">
+    <decayedCancelled>
+      <entry key="MS100" value="1.0" />
+      <entry key="MS500" value="1.0000850104663495" />
+      <entry key="S2" value="1.0960214145767186" />
+      <entry key="S5" value="1.3916942893522213" />
+      <entry key="S10" value="1.6258548468712384" />
+      <entry key="S30" value="1.8553776004442732" />
+      <entry key="S60" value="1.9248662608422222" />
+      <entry key="M2" value="1.9616996728928537" />
+      <entry key="M5" value="1.9845001515576213" />
+      <entry key="M10" value="1.9922198101013813" />
+      <entry key="M15" value="1.994806457665495" />
+      <entry key="M30" value="1.9973998484386766" />
+      <entry key="H1" value="1.9986990780203397" />
+      <entry key="H2" value="1.9993493273227032" />
+      <entry key="H4" value="1.9996746107222605" />
+      <entry key="D1" value="1.999945761099596" />
+      <entry key="W1" value="1.9999922514055366" />
+    </decayedCancelled>
+    <decayedSelected>
+      <entry key="MS100" value="0.0" />
+      <entry key="MS500" value="0.0" />
+      <entry key="S2" value="0.0" />
+      <entry key="S5" value="0.0" />
+      <entry key="S10" value="0.0" />
+      <entry key="S30" value="0.0" />
+      <entry key="S60" value="0.0" />
+      <entry key="M2" value="0.0" />
+      <entry key="M5" value="0.0" />
+      <entry key="M10" value="0.0" />
+      <entry key="M15" value="0.0" />
+      <entry key="M30" value="0.0" />
+      <entry key="H1" value="0.0" />
+      <entry key="H2" value="0.0" />
+      <entry key="H4" value="0.0" />
+      <entry key="D1" value="0.0" />
+      <entry key="W1" value="0.0" />
+    </decayedSelected>
+    <decayedShown>
+      <entry key="MS100" value="6.892680933158469E-13" />
+      <entry key="MS500" value="0.0037094237729771943" />
+      <entry key="S2" value="0.30760245918347895" />
+      <entry key="S5" value="0.8979550275206516" />
+      <entry key="S10" value="1.327408373669046" />
+      <entry key="S30" value="1.740813203059354" />
+      <entry key="S60" value="1.8654070262116103" />
+      <entry key="M2" value="1.931400854244895" />
+      <entry key="M5" value="1.972240679474587" />
+      <entry key="M10" value="1.9860664657111489" />
+      <entry key="M15" value="1.9906989604911007" />
+      <entry key="M30" value="1.9953434607187897" />
+      <entry key="H1" value="1.99767022337349" />
+      <entry key="H2" value="1.9988347346769044" />
+      <entry key="H4" value="1.9994172730530502" />
+      <entry key="D1" value="1.9999028657441835" />
+      <entry key="W1" value="1.999986123356937" />
+    </decayedShown>
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 3,
+  &quot;fromUser&quot;: false
+}</component>
   <component name="ProjectId" id="3KEe2gV6foPaCDwgPPTifjNXbFW" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -38,7 +98,8 @@
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm"
+    "nodejs_package_manager_path": "npm",
+    "ts.external.directory.path": "/Applications/WebStorm.app/Contents/plugins/javascript-plugin/jsLanguageServicesImpl/external"
   }
 }]]></component>
   <component name="SharedIndexes">
@@ -55,7 +116,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1791126949277</updated>
-      <workItem from="1791126950471" duration="455000" />
+      <workItem from="1791126950471" duration="1026000" />
     </task>
     <servers />
   </component>
