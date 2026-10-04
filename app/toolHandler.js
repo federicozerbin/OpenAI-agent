@@ -11,5 +11,9 @@ export function executeToolHandler(functionName, functionParameters){
 
 function executeReadHandler(functionParameters){
     const PATH = functionParameters[0];
-    return fs.readFile(PATH);
+    let file;
+    fs.readFile("assets/poem.txt", { encoding: "utf8" }, (err, data) => {
+        file = data;
+    });
+    return file;
 }
