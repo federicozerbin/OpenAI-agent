@@ -3,14 +3,14 @@ import fs from "fs";
 export function executeToolHandler(functionName, functionParameters){
     switch(functionName){
         case "Read":
-        return executeReadHandler(functionParameters);
-        break;
-        default: break;
+            return executeReadHandler(functionParameters);
+        default:
+            return executeReadHandler(functionParameters);
     }
 }
 
 function executeReadHandler(functionParameters){
-    const PATH = functionParameters[0];
+    const PATH = functionParameters.file_path;
     let file;
     fs.readFile(PATH, { encoding: "utf8" }, (err, data) => {
         file = data;

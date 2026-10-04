@@ -55,7 +55,7 @@ async function main() {
     const functionName = firstToolCall.function.name;
     const functionParameters = firstToolCall.function.arguments;
     const res = executeToolHandler(functionName, functionParameters);
-    print(res);
+    console.log(res);
   }
 
   // You can use print statements as follows for debugging, they'll be visible when running tests.
