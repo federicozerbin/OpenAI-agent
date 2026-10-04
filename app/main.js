@@ -86,12 +86,18 @@ async function main() {
     for (const toolCall of toolCalls) {
       const functionName = toolCall.function.name;
       const functionParameters = JSON.parse(toolCall.function.arguments);
-      const result = await executeToolHandler(functionName, functionParameters);
+
+      let result;
+      try {
+        result = await executeToolHandler(functionName, functionParameters);
+      } catch (e) {
+        result = `Error: ${e.message}`;
+      }
 
       messages.push({
         role: "tool",
         tool_call_id: toolCall.id,
-        content: result,
+        content: String(result ?? ""),
       });
     }
   }

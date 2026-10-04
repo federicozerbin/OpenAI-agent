@@ -19,5 +19,6 @@ async function executeReadHandler({ file_path }) {
 async function executeWriteHandler({ file_path, content }) {
     const dir = path.dirname(file_path);
     await fs.mkdir(dir, { recursive: true });
-    return await fs.writeFile(file_path, content, { encoding: "utf8" });
+    await fs.writeFile(file_path, content, { encoding: "utf8" });
+    return `file written in: ${file_path}`;
 }
