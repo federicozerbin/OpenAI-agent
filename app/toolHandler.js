@@ -1,5 +1,6 @@
 import fs from "fs/promises"
 import path from "path";
+
 const { execSync } = await import("child_process");
 
 export async function executeToolHandler(functionName, functionParameters) {
@@ -20,7 +21,15 @@ async function executeReadHandler({ file_path }) {
 }
 
 async function executeBashHandler({ command }) {
-    return execSync(command, { encoding: "utf-8" });
+    try {
+        return execSync(command, {
+            encoding: "utf-8",
+            stdio: ["ignore", "pipe", "pipe"],
+        });
+    } catch (e) {
+        // e.stdout e e.stderr sono disponibili quando il comando fallisce
+        return `${e.stdout ?? ""}${e.stderr ?? ""}` || `Errore: ${e.message}`;
+    }
 }
 
 async function executeWriteHandler({ file_path, content }) {
