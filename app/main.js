@@ -1,11 +1,11 @@
 import OpenAI from "openai";
-import {executeToolHandler} from "./toolHandler.js";
+import { executeToolHandler } from "./toolHandler.js";
 
 async function main() {
   const [, , flag, prompt] = process.argv;
   const apiKey = process.env.OPENROUTER_API_KEY;
   const baseURL =
-    process.env.OPENROUTER_BASE_URL ?? "https://openrouter.ai/api/v1";
+      process.env.OPENROUTER_BASE_URL ?? "https://openrouter.ai/api/v1";
 
   if (!apiKey) {
     throw new Error("OPENROUTER_API_KEY is not set");
@@ -19,52 +19,60 @@ async function main() {
     baseURL: baseURL,
   });
 
-  const response = await client.chat.completions.create({
-    model: "anthropic/claude-haiku-4.5",
-    messages: [{ role: "user", content: prompt }],
-
-    // tools make fs local function available to the agent
-    tools: [
-      {
-        "type": "function",
-        "function": {
-          "name": "Read",
-          "description": "Read and return the contents of a file",
-          "parameters": {
-            "type": "object",
-            "properties": {
-              "file_path": {
-                "type": "string",
-                "description": "The path to the file to read"
-              }
-            },
-            "required": ["file_path"]
+  const tools = [
+        {
+          "type": "function",
+          "function": {
+            "name": "Read",
+            "description": "Read and return the contents of a file",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "file_path": {
+                  "type": "string",
+                  "description": "The path to the file to read"
+                }
+              },
+              "required": ["file_path"]
+            }
           }
         }
+      ];
+
+  const messages = [{ role: "user", content: prompt }];
+
+  await get_response(model, messages, tools);
+
+  async function get_response(model, messages, tools){
+
+    const response = await client.chat.completions.create({
+      model: model,
+      messages: messages,
+      tools: tools,
+    });
+
+    //check choices
+    if (!response.choices || response.choices.length === 0) {
+      throw new Error("no choices in response");
+    }
+
+
+    //starts loop
+    if (response.choices[0].message.tool_calls?.length) { //there are tool calls
+      for(const toolCall in response.choices[0].message.tool_calls ){
+        const functionName = toolCall.function.name;
+        const functionParameters = JSON.parse(toolCall.function.arguments);
+        const res = await executeToolHandler(functionName, functionParameters);
+        messages.push({ role: "tool", tool_call_id: toolCall.id, content: res });
       }
-    ]
-  });
-
-  if (!response.choices || response.choices.length === 0) {
-    throw new Error("no choices in response");
+    } else { //no tool calls
+      messages.push({ role: "user", content: response.choices[0].message.content });
+    }
+    await get_response(model, messages, tools);
   }
-
-  if (response.choices[0].message.tool_calls?.length) {
-    const toolCalls = response.choices[0].message.tool_calls;
-    const firstToolCall = toolCalls[0];
-    const functionName = firstToolCall.function.name;
-    const functionParameters = JSON.parse(firstToolCall.function.arguments);
-    const res = await executeToolHandler(functionName, functionParameters);
-    console.log(res);
-  } else {
-    console.log(response.choices[0].message.content);
-  }
-
 
   // You can use print statements as follows for debugging, they'll be visible when running tests.
   console.error("Logs from your program will appear here!");
-
-
 }
 
 main();
