@@ -12,5 +12,3 @@ export async function executeToolHandler(functionName, functionParameters) {
 async function executeReadHandler({ file_path }) {
     return await fs.readFile(file_path, { encoding: "utf8" });
 }
-
-

@@ -56,19 +56,23 @@ async function main() {
       throw new Error("no choices in response");
     }
 
+    const assistant_message = response.choices[0].message;
+    const tool_calls = assistant_message.tool_calls;
+
 
     //starts loop
-    if (response.choices[0].message.tool_calls?.length) { //there are tool calls
-      for(const toolCall in response.choices[0].message.tool_calls ){
-        const functionName = toolCall.function.name;
-        const functionParameters = JSON.parse(toolCall.function.arguments);
-        const res = await executeToolHandler(functionName, functionParameters);
-        messages.push({ role: "tool", tool_call_id: toolCall.id, content: res });
+    if (tool_calls?.length) { //there are tool calls
+      for(const x in tool_calls){
+        const functionName = x.function.name;
+        const functionParameters = JSON.parse(x.function.arguments);
+        const file_content = await executeToolHandler(functionName, functionParameters);
+        messages.push(assistant_message,{ role: "tool", tool_call_id: x.id, content: file_content });
+        await get_response(model, messages, tools);
       }
     } else { //no tool calls
       messages.push({ role: "user", content: response.choices[0].message.content });
     }
-    await get_response(model, messages, tools);
+
   }
 
   // You can use print statements as follows for debugging, they'll be visible when running tests.
