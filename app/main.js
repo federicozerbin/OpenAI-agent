@@ -41,38 +41,38 @@ async function main() {
 
   const messages = [{ role: "user", content: prompt }];
 
-  await get_response(model, messages, tools);
-
-  async function get_response(model, messages, tools){
-
+  while (true) {
     const response = await client.chat.completions.create({
-      model: model,
-      messages: messages,
-      tools: tools,
+      model,
+      messages,
+      tools,
     });
 
-    //check choices
     if (!response.choices || response.choices.length === 0) {
       throw new Error("no choices in response");
     }
 
-    const assistant_message = response.choices[0].message;
-    const tool_calls = assistant_message.tool_calls;
+    const assistantMessage = response.choices[0].message;
+    messages.push(assistantMessage);
 
+    const toolCalls = assistantMessage.tool_calls;
 
-    //starts loop
-    if (tool_calls.length && tool_calls.length > 0) { //there are tool calls
-      for(const x in tool_calls){
-        const functionName = x.function.name;
-        const functionParameters = JSON.parse(x.function.arguments);
-        const file_content = await executeToolHandler(functionName, functionParameters);
-        messages.push(assistant_message,{ role: "tool", tool_call_id: x.id, content: file_content });
-        await get_response(model, messages, tools);
-      }
-    } else { //no tool calls
-      messages.push({ role: "user", content: response.choices[0].message.content });
+    if (!toolCalls?.length) {
+      console.log(assistantMessage.content);
+      break;
     }
 
+    for (const toolCall of toolCalls) {
+      const functionName = toolCall.function.name;
+      const functionParameters = JSON.parse(toolCall.function.arguments);
+      const result = await executeToolHandler(functionName, functionParameters);
+
+      messages.push({
+        role: "tool",
+        tool_call_id: toolCall.id,
+        content: result,
+      });
+    }
   }
 
   // You can use print statements as follows for debugging, they'll be visible when running tests.
