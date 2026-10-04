@@ -56,10 +56,10 @@ async function main() {
     const functionParameters = JSON.parse(firstToolCall.function.arguments);
     const res = await executeToolHandler(functionName, functionParameters);
     console.log(res);
+  } else {
+    console.log(response.choices[0].message.content);
   }
 
-  if (response.choices[0].message)
-  console.log(response.choices[0].message.content);
 
   // You can use print statements as follows for debugging, they'll be visible when running tests.
   console.error("Logs from your program will appear here!");
