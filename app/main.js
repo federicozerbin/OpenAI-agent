@@ -57,6 +57,8 @@ async function main() {
     const res = await executeToolHandler(functionName, functionParameters);
     console.log(res);
   }
+
+  if (response.choices[0].message)
   console.log(response.choices[0].message.content);
 
   // You can use print statements as follows for debugging, they'll be visible when running tests.
