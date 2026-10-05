@@ -48,14 +48,19 @@ function buildSystemPrompt(skills) {
 function resolvePrompt(prompt, skills) {
     if (!prompt.startsWith("/")) return prompt;
 
-    const [cmd, ...rest] = prompt.slice(1).split(/\s+/);
+    const [cmd, ...positional] = prompt.slice(1).split(/\s+/);
     const skill = skills.find((s) => s.name === cmd);
     if (!skill) return prompt;
 
-    const args = rest.join(" ");
-    // if body uses $ARGUMENTS i use them instead of args, else I append args
-    if (skill.body.includes("$ARGUMENTS")) {
-        return skill.body.replaceAll("$ARGUMENTS", args);
+    const args = positional.join(" ");
+    // check if body uses $ARGUMENTS placeholder
+    const hasPlaceholder = /\$ARGUMENTS|\$\d+/.test(skill.body);
+    if (!hasPlaceholder) {
+        return args ? `${skill.body}\n\nARGUMENTS: ${args}` : skill.body;
     }
-    return args ? `${skill.body}\n\nARGUMENTS: ${args}` : skill.body;
+
+    // if there are $ARGUMENTS -> i replace them in positional order
+    return skill.body.replace(/\$ARGUMENTS|\$(\d+)/g, (_match, index) =>
+        index === undefined ? args : (positional[Number(index)] ?? "")
+    );
 }
