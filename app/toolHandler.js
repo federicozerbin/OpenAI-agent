@@ -1,9 +1,10 @@
 import fs from "fs/promises"
 import path from "path";
+import {runSkillTool} from "./skillHandler.js";
 
 const { execSync } = await import("child_process");
 
-export async function executeToolHandler(functionName, functionParameters) {
+export async function executeToolHandler(functionName, functionParameters, skills) {
     switch (functionName) {
         case "Read":
             return await executeReadHandler(functionParameters);
@@ -11,6 +12,8 @@ export async function executeToolHandler(functionName, functionParameters) {
             return await executeWriteHandler(functionParameters);
         case "Bash":
             return await executeBashHandler(functionParameters);
+        case "Skill":
+            return await executeSkillHandler(skill, functionParameters);
         default:
             throw new Error(`Unknown tool: ${functionName}`);
     }
@@ -37,4 +40,8 @@ async function executeWriteHandler({ file_path, content }) {
     await fs.mkdir(dir, { recursive: true });
     await fs.writeFile(file_path, content, { encoding: "utf8" });
     return `file written in: ${file_path}`;
+}
+
+async function executeSkillHandler(skill, functionParameters) {
+    return runSkillTool(skills, functionParameters);
 }

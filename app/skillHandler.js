@@ -6,8 +6,9 @@ export function skillHandler(userPrompt) {
     const skills = loadSkills();
     const systemPrompt = buildSystemPrompt(skills);
     const resolvedUserPrompts = resolvePrompt(userPrompt, skills);
-    return { systemPrompt, resolvedUserPrompts };
+    return { skills, systemPrompt, resolvedUserPrompts };
 }
+
 
 //loads skills into array
 function loadSkills() {
@@ -42,7 +43,7 @@ function loadSkills() {
 
 function buildSystemPrompt(skills) {
     const list = skills.map((s) => `- ${s.name}: ${s.description}`).join("\n");
-    return `You have access to the following skills:\n\n${list}`;
+    return `You have access to the following skills:\n\n${list}\n\nIf a skill matches the user's request, call the Skill tool with its name\nand follow the instructions it returns.`;
 }
 
 //builds the user prompt with positional args tokens
@@ -83,4 +84,13 @@ function fillBody(body, tokens) {
     return body.replace(/\$ARGUMENTS|\$(\d+)/g, (_m, index) =>
         index === undefined ? args : (tokens[Number(index)] ?? "")
     );
+}
+
+//called by toolHandler if theres a skill
+export function runSkillTool(skills, { name, args }) {
+    const skill = skills.find((s) => s.name === name);
+    if (!skill) return `Error: skill "${name}" not found`;
+
+    const tokens = (args ?? "").trim().split(/\s+/).filter(Boolean);
+    return fillBody(skill.body, tokens);
 }

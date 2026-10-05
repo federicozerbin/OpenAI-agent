@@ -75,10 +75,25 @@ async function main() {
               }
             }
           }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "Skill",
+            "description": "Load a skill's instructions into the conversation",
+            "parameters": {
+              "type": "object",
+              "required": ["name"],
+              "properties": {
+                "name": { "type": "string", "description": "The name of the skill to use" },
+                "args": { "type": "string", "description": "Optional arguments for the skill" }
+              }
+            }
+          }
         }
       ];
 
-  const { systemPrompt, resolvedUserPrompts } = skillHandler(prompt);
+  const { skills, systemPrompt, resolvedUserPrompts } = skillHandler(prompt);
 
   const messages = [
     { role: "system", content: systemPrompt },
@@ -112,7 +127,7 @@ async function main() {
 
       let result;
       try {
-        result = await executeToolHandler(functionName, functionParameters);
+        result = await executeToolHandler(functionName, functionParameters, skills);
       } catch (e) {
         result = `Error: ${e.message}`;
       }
