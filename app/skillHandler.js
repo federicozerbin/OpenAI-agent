@@ -26,7 +26,7 @@ function loadSkills() {
 
         const content = fs.readFileSync(file, "utf8");
         // check if contains frontmatter between "---" and extract it
-        const match = content.match(/^---\r?\n([\s\S]*?)\r?\n---/);
+        const match = content.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n?([\s\S]*)$/);
         if (!match) continue;
 
         //parse it to add it to the skills
