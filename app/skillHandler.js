@@ -1,14 +1,12 @@
 import YAML from "yaml";
 import fs from "fs";
 import path from "path";
-import {startSubagent} from "./subagentHandler.js";
 
 export function skillHandler(userPrompt) {
-    const skills = loadSkills()[0];
-    const subMessage = loadSkills()[1];
+    const skills = loadSkills();
     const systemPrompt = buildSystemPrompt(skills);
     const resolvedUserPrompts = resolvePrompt(userPrompt, skills);
-    return { skills, systemPrompt, resolvedUserPrompts, subMessage };
+    return { skills, systemPrompt, resolvedUserPrompts };
 }
 
 
@@ -32,18 +30,16 @@ function loadSkills() {
         const match = content.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n?([\s\S]*)$/);
         if (!match) continue;
 
-        //check if context:fork for subagent
-        if(match.includes("context")) let subMessage = startSubagent(match[2].trim());
-
         //parse it to add it to the skills
         const meta = YAML.parse(match[1]) ?? {};
         skills.push({
             name: meta.name ?? entry.name,
             description: meta.description ?? "",
+            context: meta.context,
             body: match[2].trim(),
         });
     }
-    return [skills , subMessage];
+    return skills;
 }
 
 function buildSystemPrompt(skills) {
@@ -80,22 +76,22 @@ function resolvePrompt(prompt, skills) {
 }
 
 // fills a single body with positional token ARGUMENTS
-function fillBody(body, tokens) {
+function fillBody(body, tokens, appendArgs = true) {
     const args = tokens.join(" ");
 
     if (!/\$ARGUMENTS|\$\d+/.test(body)) {
-        return args ? `${body}\n\nARGUMENTS: ${args}` : body;
+        return args && appendArgs ? `${body}\n\nARGUMENTS: ${args}` : body;
     }
     return body.replace(/\$ARGUMENTS|\$(\d+)/g, (_m, index) =>
         index === undefined ? args : (tokens[Number(index)] ?? "")
     );
 }
 
-//called by toolHandler if theres a skill
-export function runSkillTool(skills, { name, args }) {
+//for subagent skill calls
+export function expandSkill(skills, { name, args }) {
     const skill = skills.find((s) => s.name === name);
-    if (!skill) return `Error: skill "${name}" not found`;
+    if (!skill) return null;
 
     const tokens = (args ?? "").trim().split(/\s+/).filter(Boolean);
-    return fillBody(skill.body, tokens);
+    return { skill, text: fillBody(skill.body, tokens, skill.context !== "fork") };
 }

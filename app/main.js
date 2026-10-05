@@ -1,6 +1,6 @@
 import OpenAI from "openai";
-import { executeToolHandler } from "./toolHandler.js";
 import { skillHandler } from "./skillHandler.js";
+import { startAgent } from "./agentLoop.js";
 
 async function main() {
   const [, , flag, prompt] = process.argv;
@@ -93,55 +93,15 @@ async function main() {
         }
       ];
 
-  const { skills, systemPrompt, resolvedUserPrompts, subMessage } = skillHandler(prompt);
+  const { skills, systemPrompt, resolvedUserPrompts} = skillHandler(prompt);
 
   const messages = [
     { role: "system", content: systemPrompt },
       ...resolvedUserPrompts,
   ];
 
-  if(subMessage) messages.push(...subMessage);
-
-  while (true) {
-    const response = await client.chat.completions.create({
-      model,
-      messages,
-      tools,
-    });
-
-    if (!response.choices || response.choices.length === 0) {
-      throw new Error("no choices in response");
-    }
-
-    const assistantMessage = response.choices[0].message;
-    messages.push(assistantMessage);
-
-    const toolCalls = assistantMessage.tool_calls;
-
-    if (!toolCalls?.length) {
-      console.log(assistantMessage.content);
-      break;
-    }
-
-    for (const toolCall of toolCalls) {
-      const functionName = toolCall.function.name;
-      const functionParameters = JSON.parse(toolCall.function.arguments);
-
-      let result;
-      try {
-        result = await executeToolHandler(functionName, functionParameters, skills);
-      } catch (e) {
-        console.error("Tool error:", functionName, e);
-        result = `Error: ${e.message}`;
-      }
-
-      messages.push({
-        role: "tool",
-        tool_call_id: toolCall.id,
-        content: String(result ?? ""),
-      });
-    }
-  }
+  const answer = await startAgent(client, model, messages, tools, skills);
+  console.log(answer);
 
   // You can use print statements as follows for debugging, they'll be visible when running tests.
   console.error("Logs from your program will appear here!");
