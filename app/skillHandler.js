@@ -4,8 +4,9 @@ import path from "path";
 
 export function skillHandler(){
     let array = loadSkills();
-    buildSystemPrompt(array);
-    return array;
+    let prompt = buildSystemPrompt(array);
+    let fixedPrompt = resolvePrompt(prompt, array);
+    return [array, prompt, fixedPrompt];
 }
 
 //loads skills into array
@@ -33,6 +34,7 @@ function loadSkills() {
         skills.push({
             name: meta.name ?? entry.name,
             description: meta.description ?? "",
+            body: match[2].trim(),
         });
     }
     return skills;
@@ -41,4 +43,19 @@ function loadSkills() {
 function buildSystemPrompt(skills) {
     const list = skills.map((s) => `- ${s.name}: ${s.description}`).join("\n");
     return `You have access to the following skills:\n\n${list}`;
+}
+
+function resolvePrompt(prompt, skills) {
+    if (!prompt.startsWith("/")) return prompt;
+
+    const [cmd, ...rest] = prompt.slice(1).split(/\s+/);
+    const skill = skills.find((s) => s.name === cmd);
+    if (!skill) return prompt;
+
+    const args = rest.join(" ");
+    // if body uses $ARGUMENTS i use them instead of args, else I append args
+    if (skill.body.includes("$ARGUMENTS")) {
+        return skill.body.replaceAll("$ARGUMENTS", args);
+    }
+    return args ? `${skill.body}\n\nARGUMENTS: ${args}` : skill.body;
 }

@@ -78,11 +78,11 @@ async function main() {
         }
       ];
 
-  const skills = skillHandler();
+  const skills = skillHandler()[0];
 
   const messages = [
-      { "role": "system", "content": "You have access to the following skills:\n\n- apple: ..." },
-      { role: "user", content: prompt }
+    { role: "system", content: skillHandler()[1] },
+    { role: "user", content: skillHandler()[2] },
   ];
 
   while (true) {
