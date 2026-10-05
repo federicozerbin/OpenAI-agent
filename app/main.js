@@ -78,11 +78,11 @@ async function main() {
         }
       ];
 
-  const { systemPrompt, userMessages } = skillHandler(prompt);
+  const { systemPrompt, resolvedUserPrompts } = skillHandler(prompt);
 
   const messages = [
     { role: "system", content: systemPrompt },
-      ...userMessages,
+      ...resolvedUserPrompts,
   ];
 
   while (true) {
