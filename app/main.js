@@ -77,7 +77,10 @@ async function main() {
         }
       ];
 
-  const messages = [{ role: "user", content: prompt }];
+  const messages = [
+      { "role": "system", "content": "You have access to the following skills:\n\n- apple: ..." },
+      { role: "user", content: prompt }
+  ];
 
   while (true) {
     const response = await client.chat.completions.create({
