@@ -13,7 +13,7 @@ export async function executeToolHandler(functionName, functionParameters, skill
         case "Bash":
             return await executeBashHandler(functionParameters);
         case "Skill":
-            return await executeSkillHandler(skill, functionParameters);
+            return await executeSkillHandler(skills, functionParameters);
         default:
             throw new Error(`Unknown tool: ${functionName}`);
     }
