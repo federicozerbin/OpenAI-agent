@@ -2,11 +2,11 @@ import YAML from "yaml";
 import fs from "fs";
 import path from "path";
 
-export function skillHandler(){
-    let array = loadSkills();
-    let prompt = buildSystemPrompt(array);
-    let fixedPrompt = resolvePrompt(prompt, array);
-    return [array, prompt, fixedPrompt];
+export function skillHandler(userPrompt) {
+    const skills = loadSkills();
+    const systemPrompt = buildSystemPrompt(skills);
+    const resolvedPrompt = resolvePrompt(userPrompt, skills);
+    return { systemPrompt, resolvedPrompt };
 }
 
 //loads skills into array
