@@ -27,7 +27,7 @@ async function executeBashHandler({ command }) {
             stdio: ["ignore", "pipe", "pipe"],
         });
     } catch (e) {
-        // e.stdout e e.stderr sono disponibili quando il comando fallisce
+        // e.stdout e e.stderr are for when command fails 
         return `${e.stdout ?? ""}${e.stderr ?? ""}` || `Errore: ${e.message}`;
     }
 }
