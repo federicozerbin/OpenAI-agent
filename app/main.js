@@ -129,6 +129,7 @@ async function main() {
       try {
         result = await executeToolHandler(functionName, functionParameters, skills);
       } catch (e) {
+        console.error("Tool error:", functionName, e);
         result = `Error: ${e.message}`;
       }
 

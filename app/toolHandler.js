@@ -42,6 +42,6 @@ async function executeWriteHandler({ file_path, content }) {
     return `file written in: ${file_path}`;
 }
 
-async function executeSkillHandler(skill, functionParameters) {
+async function executeSkillHandler(skills, functionParameters) {
     return runSkillTool(skills, functionParameters);
 }
