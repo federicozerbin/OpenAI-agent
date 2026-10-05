@@ -93,12 +93,14 @@ async function main() {
         }
       ];
 
-  const { skills, systemPrompt, resolvedUserPrompts } = skillHandler(prompt);
+  const { skills, systemPrompt, resolvedUserPrompts, subMessage } = skillHandler(prompt);
 
   const messages = [
     { role: "system", content: systemPrompt },
       ...resolvedUserPrompts,
   ];
+
+  if(subMessage) messages.push(...subMessage);
 
   while (true) {
     const response = await client.chat.completions.create({

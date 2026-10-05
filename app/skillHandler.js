@@ -1,12 +1,14 @@
 import YAML from "yaml";
 import fs from "fs";
 import path from "path";
+import {startSubagent} from "./subagentHandler.js";
 
 export function skillHandler(userPrompt) {
-    const skills = loadSkills();
+    const skills = loadSkills()[0];
+    const subMessage = loadSkills()[1];
     const systemPrompt = buildSystemPrompt(skills);
     const resolvedUserPrompts = resolvePrompt(userPrompt, skills);
-    return { skills, systemPrompt, resolvedUserPrompts };
+    return { skills, systemPrompt, resolvedUserPrompts, subMessage };
 }
 
 
@@ -30,6 +32,9 @@ function loadSkills() {
         const match = content.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n?([\s\S]*)$/);
         if (!match) continue;
 
+        //check if context:fork for subagent
+        if(match.includes("context")) let subMessage = startSubagent(match[2].trim());
+
         //parse it to add it to the skills
         const meta = YAML.parse(match[1]) ?? {};
         skills.push({
@@ -38,7 +43,7 @@ function loadSkills() {
             body: match[2].trim(),
         });
     }
-    return skills;
+    return [skills , subMessage];
 }
 
 function buildSystemPrompt(skills) {
