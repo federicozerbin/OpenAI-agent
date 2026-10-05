@@ -1,5 +1,6 @@
 import OpenAI from "openai";
 import { executeToolHandler } from "./toolHandler.js";
+import { skillHandler } from "./skillHandler.js";
 
 async function main() {
   const [, , flag, prompt] = process.argv;
@@ -76,6 +77,8 @@ async function main() {
           }
         }
       ];
+
+  const skills = skillHandler();
 
   const messages = [
       { "role": "system", "content": "You have access to the following skills:\n\n- apple: ..." },
