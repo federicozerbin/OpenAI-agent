@@ -83,6 +83,7 @@ async function main() {
   const messages = [
     { role: "system", content: systemPrompt },
     { role: "user", content: resolvedPrompt },
+    { role: "user", content: resolvedPrompt },
   ];
 
   while (true) {
