@@ -5,8 +5,8 @@ import path from "path";
 export function skillHandler(userPrompt) {
     const skills = loadSkills();
     const systemPrompt = buildSystemPrompt(skills);
-    const resolvedPrompt = resolvePrompt(userPrompt, skills);
-    return { systemPrompt, resolvedPrompt };
+    const resolvedUserPrompts = resolvePrompt(userPrompt, skills);
+    return { systemPrompt, resolvedUserPrompts };
 }
 
 //loads skills into array
@@ -45,22 +45,42 @@ function buildSystemPrompt(skills) {
     return `You have access to the following skills:\n\n${list}`;
 }
 
+//builds the user prompt with positional args tokens
 function resolvePrompt(prompt, skills) {
-    if (!prompt.startsWith("/")) return prompt;
 
-    const [cmd, ...positional] = prompt.slice(1).split(/\s+/);
-    const skill = skills.find((s) => s.name === cmd);
-    if (!skill) return prompt;
+    //splits prompt (each token is a skill or ARGUMENT)
+    const tokens = prompt.trim().split(/\s+/);
+    const used = [];
+    let i = 0;
 
-    const args = positional.join(" ");
-    // check if body uses $ARGUMENTS placeholder
-    const hasPlaceholder = /\$ARGUMENTS|\$\d+/.test(skill.body);
-    if (!hasPlaceholder) {
-        return args ? `${skill.body}\n\nARGUMENTS: ${args}` : skill.body;
+    //while token starts with /, it's a skill, i push it in an array
+    while (i < tokens.length && tokens[i].startsWith("/")) {
+        const skill = skills.find((s) => s.name === tokens[i].slice(1));
+        if (!skill) break;
+        used.push(skill);
+        i++;
     }
 
-    // if there are $ARGUMENTS -> i replace them in positional order
-    return skill.body.replace(/\$ARGUMENTS|\$(\d+)/g, (_match, index) =>
-        index === undefined ? args : (positional[Number(index)] ?? "")
+    //if it doesn not start with / it's a user message
+    if (used.length === 0) return [{ role: "user", content: prompt }];
+
+    //the rest, is shared ARGUMENT between the skills, we take
+    // each skill with map and fill their body with "rest"
+    const rest = tokens.slice(i);
+    return used.map((skill) => ({
+        role: "user",
+        content: fillBody(skill.body, rest),
+    }));
+}
+
+// fills a single body with positional token ARGUMENTS
+function fillBody(body, tokens) {
+    const args = tokens.join(" ");
+
+    if (!/\$ARGUMENTS|\$\d+/.test(body)) {
+        return args ? `${body}\n\nARGUMENTS: ${args}` : body;
+    }
+    return body.replace(/\$ARGUMENTS|\$(\d+)/g, (_m, index) =>
+        index === undefined ? args : (tokens[Number(index)] ?? "")
     );
 }
