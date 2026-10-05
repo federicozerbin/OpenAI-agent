@@ -4,7 +4,7 @@ import path from "path";
 
 export function skillHandler(){
     let array = loadSkills();
-    buildSystemPrompt();
+    buildSystemPrompt(array);
     return array;
 }
 
